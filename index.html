@@ -1,0 +1,1087 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<title>خوارزم | بوابتك إلى المعرفة الرقمية</title>
+<meta name="description" content="منصة خوارزم التعليمية — تعلم الذكاء الاصطناعي، البرمجة، تحليل البيانات، صناعة الألعاب، والتصميم ثلاثي الأبعاد في تجربة تعليمية عربية غامرة.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;800;900&family=IBM+Plex+Sans+Arabic:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#05060c;
+  --bg-alt:#0a0d1c;
+  --bg-soft:#0d1128;
+  --panel:rgba(255,255,255,0.045);
+  --panel-strong:rgba(255,255,255,0.07);
+  --border:rgba(255,255,255,0.09);
+  --border-soft:rgba(255,255,255,0.05);
+  --blue:#00c6ff;
+  --purple:#7b61ff;
+  --violet:#9d4edd;
+  --gold:#d9b47c;
+  --text:#f3f5fb;
+  --text-dim:#9ba1bd;
+  --text-faint:#5d6284;
+  --r-lg:24px;
+  --r-md:18px;
+  --r-sm:12px;
+  --ease:cubic-bezier(.16,.84,.44,1);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  background:var(--bg);
+  color:var(--text);
+  font-family:'IBM Plex Sans Arabic','Cairo',sans-serif;
+  overflow-x:hidden;
+  line-height:1.7;
+  -webkit-font-smoothing:antialiased;
+}
+::selection{background:var(--purple);color:#fff;}
+h1,h2,h3,h4,.font-display{font-family:'Cairo',sans-serif;}
+a{color:inherit;text-decoration:none;}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit;}
+img,svg{display:block;max-width:100%;}
+.container{max-width:1280px;margin:0 auto;padding:0 32px;}
+@media(max-width:640px){.container{padding:0 20px;}}
+
+@media(prefers-reduced-motion:reduce){
+  *{animation-duration:0.01ms !important;animation-iteration-count:1 !important;transition-duration:0.01ms !important;scroll-behavior:auto !important;}
+}
+
+/* ---------- background wash ---------- */
+.bg-noise{
+  position:fixed;inset:0;z-index:0;pointer-events:none;
+  background:
+    radial-gradient(60% 50% at 80% -10%, rgba(123,97,255,.20), transparent 60%),
+    radial-gradient(50% 40% at 10% 15%, rgba(0,198,255,.14), transparent 60%),
+    radial-gradient(70% 50% at 50% 110%, rgba(157,78,221,.16), transparent 60%);
+}
+.grain{
+  position:fixed;inset:0;z-index:1;pointer-events:none;opacity:.035;mix-blend-mode:overlay;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='2' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ---------- loading screen ---------- */
+#loader{
+  position:fixed;inset:0;z-index:9999;background:var(--bg);
+  display:flex;flex-direction:column;align-items:center;justify-content:center;gap:28px;
+  transition:opacity .9s var(--ease), visibility .9s var(--ease);
+}
+#loader.hide{opacity:0;visibility:hidden;}
+.loader-mark{width:96px;height:96px;position:relative;}
+.loader-ring{position:absolute;inset:0;border-radius:50%;border:1.5px solid transparent;}
+.loader-ring.r1{border-top-color:var(--blue);border-right-color:var(--blue);animation:spin 1.6s linear infinite;}
+.loader-ring.r2{inset:14px;border-bottom-color:var(--purple);border-left-color:var(--purple);animation:spin 2.1s linear infinite reverse;}
+.loader-ring.r3{inset:28px;border-top-color:var(--gold);animation:spin 1.1s linear infinite;}
+.loader-dot{position:absolute;top:50%;left:50%;width:6px;height:6px;margin:-3px;border-radius:50%;background:var(--text);box-shadow:0 0 14px 3px var(--blue);}
+@keyframes spin{to{transform:rotate(360deg);}}
+.loader-word{font-family:'Cairo',sans-serif;font-weight:800;font-size:22px;letter-spacing:1px;
+  background:linear-gradient(90deg,var(--blue),var(--purple),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.loader-sub{font-size:12px;color:var(--text-faint);letter-spacing:3px;text-transform:uppercase;}
+
+/* ---------- nav ---------- */
+header{
+  position:fixed;top:0;insets-inline:0;left:0;right:0;z-index:500;
+  padding:18px 0;transition:background .4s var(--ease),padding .4s var(--ease),border-color .4s var(--ease);
+  border-bottom:1px solid transparent;
+}
+header.scrolled{
+  background:rgba(5,6,12,.72);backdrop-filter:blur(18px) saturate(140%);
+  -webkit-backdrop-filter:blur(18px) saturate(140%);
+  border-bottom-color:var(--border-soft);padding:12px 0;
+}
+.nav-inner{display:flex;align-items:center;justify-content:space-between;gap:24px;}
+.brand{display:flex;align-items:center;gap:10px;font-family:'Cairo',sans-serif;font-weight:800;font-size:20px;}
+.brand-mark{width:34px;height:34px;position:relative;flex:none;}
+.brand-mark svg{width:100%;height:100%;}
+.nav-links{display:flex;gap:6px;align-items:center;}
+.nav-links a{
+  font-size:14.5px;color:var(--text-dim);padding:9px 16px;border-radius:100px;transition:.3s var(--ease);
+}
+.nav-links a:hover{color:var(--text);background:var(--panel);}
+.nav-cta{display:flex;align-items:center;gap:12px;}
+.burger{display:none;width:40px;height:40px;border-radius:10px;border:1px solid var(--border);align-items:center;justify-content:center;}
+.burger span{display:block;width:16px;height:1.5px;background:var(--text);position:relative;}
+.burger span::before,.burger span::after{content:'';position:absolute;width:16px;height:1.5px;background:var(--text);left:0;}
+.burger span::before{top:-5px;}
+.burger span::after{top:5px;}
+
+/* ---------- buttons ---------- */
+.btn{
+  position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:14px 30px;border-radius:100px;font-size:15px;font-weight:600;
+  transition:transform .35s var(--ease),box-shadow .35s var(--ease);
+  white-space:nowrap;
+}
+.btn-primary{
+  background:linear-gradient(135deg,var(--blue),var(--purple));color:#04050b;font-weight:700;
+  box-shadow:0 8px 30px -8px rgba(123,97,255,.7);
+}
+.btn-primary:hover{transform:translateY(-2px);box-shadow:0 14px 40px -8px rgba(0,198,255,.6);}
+.btn-ghost{
+  border:1px solid var(--border);color:var(--text);background:var(--panel);backdrop-filter:blur(10px);
+}
+.btn-ghost:hover{border-color:rgba(0,198,255,.5);background:var(--panel-strong);transform:translateY(-2px);}
+.btn-sm{padding:10px 20px;font-size:13.5px;}
+
+/* ---------- hero ---------- */
+.hero{
+  position:relative;min-height:100vh;display:flex;align-items:center;justify-content:center;
+  padding-top:100px;overflow:hidden;
+}
+#hero-canvas{position:absolute;inset:0;z-index:0;opacity:.9;}
+.hero-content{position:relative;z-index:3;text-align:center;max-width:900px;margin:0 auto;padding:0 24px;}
+.eyebrow{
+  display:inline-flex;align-items:center;gap:8px;padding:8px 18px;border-radius:100px;
+  border:1px solid var(--border);background:var(--panel);backdrop-filter:blur(12px);
+  font-size:13px;color:var(--text-dim);margin-bottom:28px;letter-spacing:.3px;
+}
+.eyebrow .pulse{width:7px;height:7px;border-radius:50%;background:var(--blue);box-shadow:0 0 10px 2px var(--blue);animation:pulse 2s infinite;}
+@keyframes pulse{0%,100%{opacity:1;}50%{opacity:.35;}}
+.hero h1{
+  font-size:clamp(38px,7.2vw,84px);font-weight:900;line-height:1.15;letter-spacing:-1px;
+  background:linear-gradient(180deg,#fff 30%,#c9cee8 100%);-webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hero h1 .accent{
+  background:linear-gradient(100deg,var(--blue),var(--violet) 55%,var(--gold));
+  -webkit-background-clip:text;background-clip:text;color:transparent;
+}
+.hero p{
+  margin:26px auto 0;max-width:620px;font-size:clamp(16px,2vw,19px);color:var(--text-dim);font-weight:300;
+}
+.hero-ctas{display:flex;gap:16px;justify-content:center;margin-top:44px;flex-wrap:wrap;}
+.hero-stats{display:flex;gap:44px;justify-content:center;margin-top:76px;flex-wrap:wrap;}
+.hero-stat b{display:block;font-family:'Cairo',sans-serif;font-weight:800;font-size:26px;
+  background:linear-gradient(90deg,var(--blue),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.hero-stat span{font-size:12.5px;color:var(--text-faint);}
+.scroll-cue{
+  position:absolute;bottom:34px;left:50%;transform:translateX(-50%);z-index:3;
+  display:flex;flex-direction:column;align-items:center;gap:8px;color:var(--text-faint);font-size:11px;letter-spacing:2px;
+}
+.scroll-cue .line{width:1px;height:34px;background:linear-gradient(var(--blue),transparent);animation:scrollline 1.8s infinite;}
+@keyframes scrollline{0%{transform:scaleY(0);transform-origin:top;}50%{transform:scaleY(1);transform-origin:top;}51%{transform-origin:bottom;}100%{transform:scaleY(0);transform-origin:bottom;}}
+
+/* ---------- section shell ---------- */
+section{position:relative;z-index:2;padding:130px 0;}
+@media(max-width:768px){section{padding:90px 0;}}
+.sec-head{max-width:680px;margin:0 auto 64px;text-align:center;}
+.sec-eyebrow{
+  font-size:12.5px;letter-spacing:3px;text-transform:uppercase;color:var(--blue);font-weight:600;margin-bottom:14px;display:block;
+}
+.sec-head h2{font-size:clamp(28px,4vw,46px);font-weight:800;letter-spacing:-.5px;}
+.sec-head p{color:var(--text-dim);margin-top:16px;font-size:16.5px;}
+
+/* ---------- glass panel base ---------- */
+.glass{
+  background:var(--panel);border:1px solid var(--border);border-radius:var(--r-lg);
+  backdrop-filter:blur(16px) saturate(140%);-webkit-backdrop-filter:blur(16px) saturate(140%);
+}
+
+/* ---------- why section ---------- */
+.why-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+@media(max-width:980px){.why-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:560px){.why-grid{grid-template-columns:1fr;}}
+.why-card{
+  padding:30px 26px;transition:transform .45s var(--ease),border-color .45s var(--ease),background .45s var(--ease);
+}
+.why-card:hover{transform:translateY(-6px);border-color:rgba(0,198,255,.35);background:var(--panel-strong);}
+.why-icon{width:46px;height:46px;border-radius:14px;display:flex;align-items:center;justify-content:center;font-size:20px;margin-bottom:18px;
+  background:linear-gradient(135deg,rgba(0,198,255,.18),rgba(123,97,255,.18));border:1px solid var(--border);}
+.why-card h3{font-size:17px;font-weight:700;margin-bottom:8px;}
+.why-card p{font-size:14px;color:var(--text-dim);}
+
+/* ---------- categories ---------- */
+.cat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;perspective:1200px;}
+@media(max-width:1080px){.cat-grid{grid-template-columns:repeat(3,1fr);}}
+@media(max-width:760px){.cat-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:460px){.cat-grid{grid-template-columns:1fr;}}
+.cat-card{
+  position:relative;padding:28px 22px;min-height:190px;display:flex;flex-direction:column;justify-content:space-between;
+  transition:transform .1s linear,box-shadow .4s var(--ease),border-color .4s var(--ease);
+  transform-style:preserve-3d;overflow:hidden;
+}
+.cat-card::before{
+  content:'';position:absolute;inset:0;opacity:0;transition:opacity .4s var(--ease);
+  background:radial-gradient(220px circle at var(--mx,50%) var(--my,50%), rgba(0,198,255,.16), transparent 60%);
+}
+.cat-card:hover::before{opacity:1;}
+.cat-card:hover{border-color:rgba(157,78,221,.4);box-shadow:0 24px 50px -20px rgba(123,97,255,.45);}
+.cat-emoji{font-size:30px;filter:drop-shadow(0 0 12px rgba(0,198,255,.35));}
+.cat-card h3{font-size:16.5px;font-weight:700;margin-top:16px;}
+.cat-card .lvl{font-size:12px;color:var(--text-faint);margin-top:6px;}
+.cat-tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:14px;}
+.cat-tags span{font-size:10.5px;color:var(--text-dim);background:rgba(255,255,255,.05);border:1px solid var(--border-soft);padding:3px 9px;border-radius:100px;}
+
+/* ---------- age paths ---------- */
+.tabs{display:flex;justify-content:center;gap:10px;margin-bottom:44px;flex-wrap:wrap;}
+.tab-btn{padding:11px 22px;border-radius:100px;border:1px solid var(--border);font-size:14px;color:var(--text-dim);transition:.3s;}
+.tab-btn.active{background:linear-gradient(135deg,var(--blue),var(--purple));color:#04050b;font-weight:700;border-color:transparent;}
+.path-panel{display:none;}
+.path-panel.active{display:block;animation:fadein .5s var(--ease);}
+@keyframes fadein{from{opacity:0;transform:translateY(14px);}to{opacity:1;transform:translateY(0);}}
+.path-grid{display:grid;grid-template-columns:1fr 1.2fr;gap:36px;align-items:center;}
+@media(max-width:860px){.path-grid{grid-template-columns:1fr;}}
+.path-info h3{font-size:26px;font-weight:800;margin-bottom:14px;}
+.path-info p{color:var(--text-dim);margin-bottom:20px;}
+.path-info .age-badge{display:inline-block;padding:6px 16px;border-radius:100px;background:rgba(217,180,124,.12);border:1px solid rgba(217,180,124,.3);color:var(--gold);font-size:13px;margin-bottom:16px;}
+.path-list{display:grid;grid-template-columns:1fr 1fr;gap:14px;}
+.path-list .item{display:flex;align-items:center;gap:10px;padding:16px;font-size:14px;}
+.path-list .item .dot{width:8px;height:8px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--violet));flex:none;}
+
+/* ---------- courses carousel ---------- */
+.carousel-wrap{position:relative;}
+.carousel{display:flex;gap:22px;overflow-x:auto;scroll-snap-type:x mandatory;padding:10px 4px 26px;scrollbar-width:none;}
+.carousel::-webkit-scrollbar{display:none;}
+.course-card{
+  flex:0 0 300px;scroll-snap-align:start;padding:0;overflow:hidden;transition:transform .4s var(--ease),border-color .4s;
+}
+.course-card:hover{transform:translateY(-6px);border-color:rgba(0,198,255,.35);}
+.course-cover{height:150px;position:relative;display:flex;align-items:center;justify-content:center;font-size:38px;}
+.course-body{padding:22px;}
+.course-cat{font-size:11.5px;color:var(--blue);text-transform:uppercase;letter-spacing:1.5px;}
+.course-body h4{font-size:16.5px;font-weight:700;margin:10px 0 8px;}
+.course-meta{display:flex;justify-content:space-between;align-items:center;margin-top:16px;font-size:12.5px;color:var(--text-faint);}
+.carousel-nav{display:flex;gap:10px;justify-content:center;margin-top:10px;}
+.carousel-nav button{width:38px;height:38px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;transition:.3s;}
+.carousel-nav button:hover{background:var(--panel-strong);border-color:rgba(0,198,255,.4);}
+
+/* ---------- dashboard preview ---------- */
+.dash-wrap{display:grid;grid-template-columns:.85fr 1.15fr;gap:40px;align-items:center;}
+@media(max-width:900px){.dash-wrap{grid-template-columns:1fr;}}
+.dash-mock{padding:26px;position:relative;}
+.dash-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:22px;}
+.dash-top .avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,var(--blue),var(--violet));}
+.ring-wrap{display:flex;gap:18px;flex-wrap:wrap;}
+.progress-row{display:flex;align-items:center;gap:14px;padding:14px 0;border-bottom:1px solid var(--border-soft);}
+.progress-row:last-child{border-bottom:none;}
+.bar-track{flex:1;height:7px;border-radius:100px;background:rgba(255,255,255,.06);overflow:hidden;}
+.bar-fill{height:100%;border-radius:100px;background:linear-gradient(90deg,var(--blue),var(--violet));}
+.dash-copy h3{font-size:28px;font-weight:800;margin-bottom:16px;}
+.dash-copy p{color:var(--text-dim);margin-bottom:22px;}
+.dash-feat{display:flex;gap:14px;margin-bottom:16px;}
+.dash-feat .n{font-family:'Cairo',sans-serif;font-weight:800;color:var(--gold);font-size:14px;flex:none;width:30px;}
+
+/* ---------- stats ---------- */
+.stats-band{border-top:1px solid var(--border-soft);border-bottom:1px solid var(--border-soft);}
+.stats-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;text-align:center;}
+@media(max-width:700px){.stats-grid{grid-template-columns:repeat(2,1fr);}}
+.stat-num{font-family:'Cairo',sans-serif;font-weight:900;font-size:clamp(32px,4.5vw,56px);
+  background:linear-gradient(90deg,var(--blue),var(--purple),var(--gold));-webkit-background-clip:text;background-clip:text;color:transparent;}
+.stat-label{color:var(--text-dim);font-size:14px;margin-top:8px;}
+
+/* ---------- testimonials ---------- */
+.test-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:22px;}
+@media(max-width:900px){.test-grid{grid-template-columns:1fr;}}
+.test-card{padding:28px;}
+.test-stars{color:var(--gold);font-size:14px;margin-bottom:14px;letter-spacing:2px;}
+.test-card p{font-size:15px;color:var(--text-dim);margin-bottom:20px;}
+.test-person{display:flex;align-items:center;gap:12px;}
+.test-avatar{width:42px;height:42px;border-radius:50%;flex:none;background:linear-gradient(135deg,var(--blue),var(--violet));display:flex;align-items:center;justify-content:center;font-weight:700;font-size:14px;}
+.test-person b{font-size:14px;display:block;}
+.test-person span{font-size:12px;color:var(--text-faint);}
+
+/* ---------- instructors ---------- */
+.inst-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:20px;}
+@media(max-width:900px){.inst-grid{grid-template-columns:repeat(2,1fr);}}
+@media(max-width:480px){.inst-grid{grid-template-columns:1fr;}}
+.inst-card{padding:26px;text-align:center;}
+.inst-avatar{width:74px;height:74px;border-radius:50%;margin:0 auto 16px;background:linear-gradient(135deg,var(--blue),var(--purple),var(--gold));display:flex;align-items:center;justify-content:center;font-weight:800;font-size:22px;font-family:'Cairo',sans-serif;color:#04050b;}
+.inst-card h4{font-size:15.5px;font-weight:700;}
+.inst-card span{font-size:12.5px;color:var(--text-faint);display:block;margin-top:4px;}
+
+/* ---------- certificates ---------- */
+.cert-wrap{display:grid;grid-template-columns:1fr 1fr 1fr;gap:22px;}
+@media(max-width:860px){.cert-wrap{grid-template-columns:1fr;}}
+.cert-card{padding:34px 26px;text-align:center;}
+.cert-badge{width:64px;height:64px;margin:0 auto 18px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:26px;
+  background:conic-gradient(from 180deg,var(--blue),var(--violet),var(--gold),var(--blue));}
+.cert-badge span{background:var(--bg);width:54px;height:54px;border-radius:50%;display:flex;align-items:center;justify-content:center;}
+.cert-card h3{font-size:18px;font-weight:700;margin-bottom:10px;}
+.cert-card p{color:var(--text-dim);font-size:14px;}
+
+/* ---------- faq ---------- */
+.faq-wrap{max-width:780px;margin:0 auto;}
+.faq-item{border-bottom:1px solid var(--border-soft);}
+.faq-q{display:flex;justify-content:space-between;align-items:center;padding:22px 4px;font-size:16px;font-weight:600;}
+.faq-q .plus{width:26px;height:26px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:15px;transition:transform .35s var(--ease);flex:none;}
+.faq-item.open .plus{transform:rotate(45deg);background:var(--panel-strong);}
+.faq-a{max-height:0;overflow:hidden;transition:max-height .45s var(--ease);}
+.faq-a p{padding:0 4px 22px;color:var(--text-dim);font-size:14.5px;max-width:640px;}
+
+/* ---------- final cta ---------- */
+.final-cta{
+  text-align:center;padding:90px 40px;position:relative;overflow:hidden;
+  background:linear-gradient(135deg,rgba(0,198,255,.08),rgba(123,97,255,.1),rgba(217,180,124,.06));
+}
+.final-cta h2{font-size:clamp(28px,4.5vw,48px);font-weight:800;margin-bottom:18px;}
+.final-cta p{color:var(--text-dim);max-width:520px;margin:0 auto 34px;}
+
+/* ---------- footer ---------- */
+footer{padding:70px 0 30px;border-top:1px solid var(--border-soft);}
+.foot-grid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1fr;gap:40px;margin-bottom:50px;}
+@media(max-width:760px){.foot-grid{grid-template-columns:1fr 1fr;}}
+.foot-brand p{color:var(--text-dim);font-size:14px;margin-top:14px;max-width:280px;}
+.foot-col h5{font-size:14px;margin-bottom:16px;color:var(--text);}
+.foot-col a{display:block;font-size:13.5px;color:var(--text-dim);margin-bottom:10px;transition:.3s;}
+.foot-col a:hover{color:var(--blue);}
+.foot-social{display:flex;gap:10px;margin-top:18px;}
+.foot-social a{width:36px;height:36px;border-radius:50%;border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-size:14px;transition:.3s;}
+.foot-social a:hover{border-color:var(--blue);color:var(--blue);}
+.foot-bottom{display:flex;justify-content:space-between;padding-top:26px;border-top:1px solid var(--border-soft);font-size:12.5px;color:var(--text-faint);flex-wrap:wrap;gap:10px;}
+
+/* ---------- reveal ---------- */
+.reveal{opacity:0;transform:translateY(36px);}
+.reveal.in{animation:reveal-in .9s var(--ease) forwards;}
+@keyframes reveal-in{to{opacity:1;transform:translateY(0);}}
+
+/* mobile nav */
+@media(max-width:900px){
+  .nav-links{position:fixed;top:70px;right:0;left:0;flex-direction:column;background:rgba(5,6,12,.97);backdrop-filter:blur(20px);
+    padding:20px;gap:4px;transform:translateY(-130%);opacity:0;transition:.4s var(--ease);border-bottom:1px solid var(--border-soft);}
+  .nav-links.open{transform:translateY(0);opacity:1;}
+  .nav-links a{width:100%;text-align:center;padding:14px;}
+  .burger{display:flex;}
+  .nav-cta .btn-ghost{display:none;}
+}
+</style>
+</head>
+<body>
+
+<div id="loader">
+  <div class="loader-mark">
+    <div class="loader-ring r1"></div>
+    <div class="loader-ring r2"></div>
+    <div class="loader-ring r3"></div>
+    <div class="loader-dot"></div>
+  </div>
+  <div class="loader-word">خوارزم</div>
+  <div class="loader-sub">KHAWARIZM</div>
+</div>
+
+<div class="bg-noise"></div>
+<div class="grain"></div>
+
+<header id="siteHeader">
+  <div class="container nav-inner">
+    <div class="brand">
+      <span class="brand-mark">
+        <svg viewBox="0 0 40 40" fill="none">
+          <defs>
+            <linearGradient id="bg1" x1="0" y1="0" x2="40" y2="40">
+              <stop offset="0" stop-color="#00c6ff"/><stop offset="1" stop-color="#9d4edd"/>
+            </linearGradient>
+          </defs>
+          <circle cx="20" cy="20" r="18" stroke="url(#bg1)" stroke-width="1.4" opacity="0.6"/>
+          <circle cx="20" cy="20" r="12" stroke="url(#bg1)" stroke-width="1.2" opacity="0.4"/>
+          <path d="M13 12 L13 28 M13 20 L23 12 M13 20 L23 28" stroke="url(#bg1)" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <circle cx="27" cy="13" r="1.6" fill="#d9b47c"/>
+        </svg>
+      </span>
+      <span>خوارزم</span>
+    </div>
+    <nav class="nav-links" id="navLinks">
+      <a href="#categories">المسارات</a>
+      <a href="#courses">الدورات</a>
+      <a href="#dashboard">لوحة الطالب</a>
+      <a href="#instructors">المدربون</a>
+      <a href="#certificates">الشهادات</a>
+      <a href="#faq">الأسئلة الشائعة</a>
+    </nav>
+    <div class="nav-cta">
+      <a href="#" class="btn btn-ghost btn-sm">تسجيل الدخول</a>
+      <a href="#hero" class="btn btn-primary btn-sm">ابدأ رحلتك</a>
+      <button class="burger" id="burger" aria-label="القائمة"><span></span></button>
+    </div>
+  </div>
+</header>
+
+<main>
+  <!-- HERO -->
+  <section class="hero" id="hero">
+    <canvas id="hero-canvas"></canvas>
+    <div class="hero-content">
+      <div class="eyebrow"><span class="pulse"></span> الجيل القادم من التعليم التقني العربي</div>
+      <h1>مستقبل التعلم <span class="accent">يبدأ من هنا</span></h1>
+      <p>تعلّم الذكاء الاصطناعي، البرمجة، صناعة الألعاب، وتحليل البيانات في منصة عربية واحدة، عبر تجربة تفاعلية غامرة تأخذك من الفكرة إلى الاحتراف.</p>
+      <div class="hero-ctas">
+        <a href="#categories" class="btn btn-primary">ابدأ رحلتك الآن</a>
+        <a href="#categories" class="btn btn-ghost">استكشف المسارات</a>
+      </div>
+      <div class="hero-stats">
+        <div class="hero-stat"><b class="counter" data-target="42">0</b><span>مسار تعليمي</span></div>
+        <div class="hero-stat"><b class="counter" data-target="18000">0</b><span>متعلم عربي</span></div>
+        <div class="hero-stat"><b class="counter" data-target="97">0</b><span>% رضا المتعلمين</span></div>
+      </div>
+    </div>
+    <div class="scroll-cue"><span>مرر للأسفل</span><span class="line"></span></div>
+  </section>
+
+  <!-- WHY -->
+  <section id="why">
+    <div class="container">
+      <div class="sec-head reveal">
+        <span class="sec-eyebrow">لماذا خوارزم</span>
+        <h2>تجربة تعليمية لا تشبه أي منصة أخرى</h2>
+        <p>بنيت خوارزم لتكون رفيقك من أول سطر كود إلى أول مشروع احترافي، بمحتوى عربي بمعايير عالمية.</p>
+      </div>
+      <div class="why-grid">
+        <div class="why-card glass reveal"><div class="why-icon">🗣️</div><h3>محتوى عربي احترافي</h3><p>شروحات دقيقة بلغة عربية سلسة، بمصطلحات تقنية موثقة ومفهومة.</p></div>
+        <div class="why-card glass reveal"><div class="why-icon">🛠️</div><h3>مشاريع عملية حقيقية</h3><p>كل مسار ينتهي بمشروع تطبيقي يضاف مباشرة إلى ملفك التعريفي.</p></div>
+        <div class="why-card glass reveal"><div class="why-icon">🎓</div><h3>مدربون متخصصون</h3><p>خبراء من صناعات التقنية والذكاء الاصطناعي يشرفون على كل دورة.</p></div>
+        <div class="why-card glass reveal"><div class="why-icon">📜</div><h3>شهادات معتمدة</h3><p>احصل على شهادة إتمام وشارات مهارة يمكن مشاركتها فور التخرج.</p></div>
+        <div class="why-card glass reveal"><div class="why-icon">🧠</div><h3>اختبارات بعد كل درس</h3><p>قِس فهمك أولاً بأول عبر اختبارات قصيرة وتغذية راجعة فورية.</p></div>
+        <div class="why-card glass reveal"><div class="why-icon">⏱️</div><h3>تعلّم بسرعتك</h3><p>محتوى مرن يتكيف مع وقتك، بلا جداول صارمة أو ضغط.</p></div>
+        <div class="why-card glass reveal"><div class="why-icon">🤝</div><h3>مجتمع متعاون</h3><p>انضم لمجتمع متعلمين عرب لتبادل الخبرات والمساعدة المتبادلة.</p></div>
+        <div class="why-card glass reveal"><div class="why-icon">📱</div><h3>على كل أجهزتك</h3><p>استمر من حيث توقفت، على الجوال أو الحاسوب أو اللوحي.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CATEGORIES -->
+  <section id="categories">
+    <div class="container">
+      <div class="sec-head reveal">
+        <span class="sec-eyebrow">الأقسام التعليمية</span>
+        <h2>13 مسارًا يغطي كل ما يحتاجه المستقبل</h2>
+        <p>من الأساسيات إلى الاحتراف، اختر القسم الذي يناسب طموحك.</p>
+      </div>
+      <div class="cat-grid" id="catGrid">
+        <!-- injected by JS -->
+      </div>
+    </div>
+  </section>
+
+  <!-- PATHS BY AGE -->
+  <section id="paths">
+    <div class="container">
+      <div class="sec-head reveal">
+        <span class="sec-eyebrow">مسارات حسب العمر</span>
+        <h2>تعليم مصمم لكل مرحلة عمرية</h2>
+      </div>
+      <div class="tabs reveal">
+        <button class="tab-btn active" data-tab="kids">الأطفال 6-12</button>
+        <button class="tab-btn" data-tab="teens">الناشئون 13-17</button>
+        <button class="tab-btn" data-tab="uni">طلاب الجامعات</button>
+        <button class="tab-btn" data-tab="pro">المحترفون</button>
+      </div>
+
+      <div class="path-panel active" data-panel="kids">
+        <div class="path-grid glass" style="padding:40px;">
+          <div class="path-info">
+            <span class="age-badge">6 – 12 سنة</span>
+            <h3>أول خطوة في عالم البرمجة</h3>
+            <p>نبني الأساس المنطقي لدى الطفل عبر البرمجة المرئية والألعاب التفاعلية، بأسلوب ممتع وآمن.</p>
+            <a href="#" class="btn btn-primary btn-sm">استكشف مسار الأطفال</a>
+          </div>
+          <div class="path-list">
+            <div class="item glass"><span class="dot"></span> Scratch</div>
+            <div class="item glass"><span class="dot"></span> أساسيات البرمجة</div>
+            <div class="item glass"><span class="dot"></span> الذكاء الاصطناعي للأطفال</div>
+            <div class="item glass"><span class="dot"></span> الألعاب التعليمية</div>
+            <div class="item glass"><span class="dot"></span> مقدمة في الروبوتات</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="path-panel" data-panel="teens">
+        <div class="path-grid glass" style="padding:40px;">
+          <div class="path-info">
+            <span class="age-badge">13 – 17 سنة</span>
+            <h3>من الفكرة إلى أول تطبيق</h3>
+            <p>ننقل الناشئين من البرمجة الأساسية إلى بناء مواقع وألعاب حقيقية، مع مقدمة قوية في الذكاء الاصطناعي.</p>
+            <a href="#" class="btn btn-primary btn-sm">استكشف مسار الناشئين</a>
+          </div>
+          <div class="path-list">
+            <div class="item glass"><span class="dot"></span> Python</div>
+            <div class="item glass"><span class="dot"></span> Front-End</div>
+            <div class="item glass"><span class="dot"></span> صناعة الألعاب</div>
+            <div class="item glass"><span class="dot"></span> أساسيات الذكاء الاصطناعي</div>
+            <div class="item glass"><span class="dot"></span> تحليل البيانات</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="path-panel" data-panel="uni">
+        <div class="path-grid glass" style="padding:40px;">
+          <div class="path-info">
+            <span class="age-badge">طلاب الجامعات</span>
+            <h3>جاهزية حقيقية لسوق العمل</h3>
+            <p>تعمّق في تعلم الآلة، هندسة الأنظمة الخلفية، وتطوير التطبيقات لبناء مشروع تخرج أو محفظة أعمال قوية.</p>
+            <a href="#" class="btn btn-primary btn-sm">استكشف مسار الجامعات</a>
+          </div>
+          <div class="path-list">
+            <div class="item glass"><span class="dot"></span> Machine Learning</div>
+            <div class="item glass"><span class="dot"></span> Back-End</div>
+            <div class="item glass"><span class="dot"></span> Flutter</div>
+            <div class="item glass"><span class="dot"></span> Power BI</div>
+            <div class="item glass"><span class="dot"></span> التصميم ثلاثي الأبعاد</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="path-panel" data-panel="pro">
+        <div class="path-grid glass" style="padding:40px;">
+          <div class="path-info">
+            <span class="age-badge">المحترفون</span>
+            <h3>قيادة التحول التقني</h3>
+            <p>مسارات متقدمة في الذكاء الاصطناعي وعلوم البيانات والقيادة الرقمية، لصناعة قرار أعمال أذكى.</p>
+            <a href="#" class="btn btn-primary btn-sm">استكشف مسار المحترفين</a>
+          </div>
+          <div class="path-list">
+            <div class="item glass"><span class="dot"></span> AI للأعمال</div>
+            <div class="item glass"><span class="dot"></span> Data Science</div>
+            <div class="item glass"><span class="dot"></span> القيادة الرقمية</div>
+            <div class="item glass"><span class="dot"></span> Business AI</div>
+            <div class="item glass"><span class="dot"></span> الأمن السيبراني</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- COURSES CAROUSEL -->
+  <section id="courses">
+    <div class="container">
+      <div class="sec-head reveal">
+        <span class="sec-eyebrow">الأكثر تسجيلاً</span>
+        <h2>دورات مميزة هذا الشهر</h2>
+      </div>
+      <div class="carousel-wrap reveal">
+        <div class="carousel" id="courseCarousel"></div>
+        <div class="carousel-nav">
+          <button id="prevBtn">◀</button>
+          <button id="nextBtn">▶</button>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- DASHBOARD -->
+  <section id="dashboard">
+    <div class="container">
+      <div class="dash-wrap">
+        <div class="dash-mock glass reveal">
+          <div class="dash-top">
+            <div>
+              <div style="font-weight:700;font-size:15px;">أهلًا، سارة 👋</div>
+              <div style="font-size:12px;color:var(--text-faint);">استمري من حيث توقفتِ</div>
+            </div>
+            <div class="avatar"></div>
+          </div>
+          <div class="progress-row">
+            <div style="width:110px;font-size:13px;">الذكاء الاصطناعي</div>
+            <div class="bar-track"><div class="bar-fill" style="width:78%"></div></div>
+            <div style="font-size:12px;color:var(--text-faint);">78%</div>
+          </div>
+          <div class="progress-row">
+            <div style="width:110px;font-size:13px;">Front-End</div>
+            <div class="bar-track"><div class="bar-fill" style="width:52%"></div></div>
+            <div style="font-size:12px;color:var(--text-faint);">52%</div>
+          </div>
+          <div class="progress-row">
+            <div style="width:110px;font-size:13px;">تحليل البيانات</div>
+            <div class="bar-track"><div class="bar-fill" style="width:31%"></div></div>
+            <div style="font-size:12px;color:var(--text-faint);">31%</div>
+          </div>
+          <div class="progress-row">
+            <div style="width:110px;font-size:13px;">صناعة الألعاب</div>
+            <div class="bar-track"><div class="bar-fill" style="width:90%"></div></div>
+            <div style="font-size:12px;color:var(--text-faint);">90%</div>
+          </div>
+        </div>
+        <div class="dash-copy reveal">
+          <span class="sec-eyebrow">لوحة الطالب</span>
+          <h3>كل تقدمك، في مكان واحد</h3>
+          <p>لوحة تحكم شخصية تعرض مسارك، دروسك المحفوظة، اختباراتك، ومشاريعك — بتصميم واضح يحفزك على الاستمرار.</p>
+          <div class="dash-feat"><span class="n">01</span><span>متابعة التقدم في كل دورة لحظة بلحظة</span></div>
+          <div class="dash-feat"><span class="n">02</span><span>تنزيل الملفات التعليمية ومشاهدة الدروس المحفوظة</span></div>
+          <div class="dash-feat"><span class="n">03</span><span>رفع المشاريع واستلام تعليقات المدربين مباشرة</span></div>
+          <div class="dash-feat"><span class="n">04</span><span>تحميل الشهادات ومتابعة نسبة الإنجاز</span></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- STATS -->
+  <section class="stats-band">
+    <div class="container">
+      <div class="stats-grid">
+        <div class="reveal"><div class="stat-num counter" data-target="18000">0</div><div class="stat-label">متعلم مسجّل</div></div>
+        <div class="reveal"><div class="stat-num counter" data-target="42">0</div><div class="stat-label">مسار تعليمي</div></div>
+        <div class="reveal"><div class="stat-num counter" data-target="310">0</div><div class="stat-label">مدرب وخبير</div></div>
+        <div class="reveal"><div class="stat-num counter" data-target="97">0</div><div class="stat-label">% نسبة الرضا</div></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section id="testimonials">
+    <div class="container">
+      <div class="sec-head reveal">
+        <span class="sec-eyebrow">آراء المتعلمين</span>
+        <h2>قصص نجاح حقيقية من مجتمعنا</h2>
+      </div>
+      <div class="test-grid">
+        <div class="test-card glass reveal">
+          <div class="test-stars">★★★★★</div>
+          <p>غيّرت خوارزم الطريقة التي أتعلم بها. المحتوى العربي دقيق ومنظم، والمشاريع العملية جعلتني أثق بمهاراتي فعليًا.</p>
+          <div class="test-person"><div class="test-avatar">ه.م</div><div><b>هاجر محمود</b><span>مطورة واجهات أمامية</span></div></div>
+        </div>
+        <div class="test-card glass reveal">
+          <div class="test-stars">★★★★★</div>
+          <p>بدأت من الصفر في الذكاء الاصطناعي، والآن أبني نماذجي الخاصة. المدربون متجاوبون والمحتوى محدث باستمرار.</p>
+          <div class="test-person"><div class="test-avatar">ي.ع</div><div><b>يوسف العتيبي</b><span>طالب هندسة حاسوب</span></div></div>
+        </div>
+        <div class="test-card glass reveal">
+          <div class="test-stars">★★★★★</div>
+          <p>ابني عمره 9 سنوات وأصبح يبرمج ألعابه الخاصة بفضل مسار الأطفال. تجربة ممتعة وآمنة تمامًا.</p>
+          <div class="test-person"><div class="test-avatar">ن.س</div><div><b>نورة السالم</b><span>ولية أمر</span></div></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- INSTRUCTORS -->
+  <section id="instructors">
+    <div class="container">
+      <div class="sec-head reveal">
+        <span class="sec-eyebrow">فريق التدريب</span>
+        <h2>يقودك خبراء من قلب الصناعة</h2>
+      </div>
+      <div class="inst-grid">
+        <div class="inst-card glass reveal"><div class="inst-avatar">لز</div><h4>لمى الزهراني</h4><span>مهندسة تعلم آلة</span></div>
+        <div class="inst-card glass reveal"><div class="inst-avatar">عك</div><h4>عمر الكندي</h4><span>مطور Full-Stack</span></div>
+        <div class="inst-card glass reveal"><div class="inst-avatar">دف</div><h4>دانة الفهد</h4><span>مصممة 3D ومؤثرات</span></div>
+        <div class="inst-card glass reveal"><div class="inst-avatar">طب</div><h4>طارق بدر</h4><span>خبير علوم بيانات</span></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- CERTIFICATES -->
+  <section id="certificates">
+    <div class="container">
+      <div class="sec-head reveal">
+        <span class="sec-eyebrow">نظام الشهادات</span>
+        <h2>إنجازك يستحق أن يُرى</h2>
+      </div>
+      <div class="cert-wrap">
+        <div class="cert-card glass reveal"><div class="cert-badge"><span>🏅</span></div><h3>شهادة إتمام الدورة</h3><p>تُمنح فور إنهاء أي دورة بنجاح واجتياز اختباراتها.</p></div>
+        <div class="cert-card glass reveal"><div class="cert-badge"><span>🥇</span></div><h3>شارة مهارة (Badge)</h3><p>احصل على شارة مستقلة لكل مهارة جديدة تتقنها.</p></div>
+        <div class="cert-card glass reveal"><div class="cert-badge"><span>🎓</span></div><h3>شهادة احترافية</h3><p>تُمنح بعد إتمام المسار الكامل، جاهزة للمشاركة مهنيًا.</p></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FAQ -->
+  <section id="faq">
+    <div class="container">
+      <div class="sec-head reveal">
+        <span class="sec-eyebrow">الأسئلة الشائعة</span>
+        <h2>كل ما تحتاج معرفته</h2>
+      </div>
+      <div class="faq-wrap reveal" id="faqWrap">
+        <div class="faq-item open">
+          <div class="faq-q"><span>هل المنصة مناسبة للمبتدئين تمامًا؟</span><span class="plus">+</span></div>
+          <div class="faq-a"><p>نعم، تبدأ كل المسارات من الأساسيات ولا تتطلب أي خبرة سابقة، مع تدرج واضح نحو المستوى الاحترافي.</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q"><span>هل الشهادات معتمدة ومعترف بها؟</span><span class="plus">+</span></div>
+          <div class="faq-a"><p>تصدر خوارزم شهادات إتمام وشهادات مسار احترافية موقعة رقميًا، يمكن مشاركتها على LinkedIn والسير الذاتية.</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q"><span>هل يمكن التعلم من الجوال؟</span><span class="plus">+</span></div>
+          <div class="faq-a"><p>المنصة متجاوبة بالكامل وتعمل بسلاسة على الجوال والتابلت والحاسوب مع مزامنة تلقائية لتقدمك.</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q"><span>كم يستغرق إنهاء مسار كامل؟</span><span class="plus">+</span></div>
+          <div class="faq-a"><p>يختلف حسب المسار وسرعتك الشخصية، لكن غالبية المسارات مصممة لتكتمل خلال 8 إلى 16 أسبوعًا بمعدل تعلم معتدل.</p></div>
+        </div>
+        <div class="faq-item">
+          <div class="faq-q"><span>هل يوجد دعم مباشر من المدربين؟</span><span class="plus">+</span></div>
+          <div class="faq-a"><p>نعم، يمكنك التواصل مع المدربين عبر لوحة الطالب وطرح الأسئلة أو استلام تعليقات على مشاريعك.</p></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- FINAL CTA -->
+  <section style="padding:0 24px;">
+    <div class="container">
+      <div class="final-cta glass reveal">
+        <h2>ابدأ رحلتك مع خوارزم اليوم</h2>
+        <p>انضم إلى آلاف المتعلمين العرب الذين يبنون مستقبلهم التقني الآن.</p>
+        <a href="#hero" class="btn btn-primary">أنشئ حسابك المجاني</a>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="container">
+    <div class="foot-grid">
+      <div class="foot-brand">
+        <div class="brand">
+          <span class="brand-mark">
+            <svg viewBox="0 0 40 40" fill="none">
+              <circle cx="20" cy="20" r="18" stroke="#00c6ff" stroke-width="1.4" opacity="0.6"/>
+              <path d="M13 12 L13 28 M13 20 L23 12 M13 20 L23 28" stroke="#9d4edd" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+            </svg>
+          </span>
+          <span>خوارزم</span>
+        </div>
+        <p>بوابتك إلى المعرفة الرقمية — تعليم تقني عربي بمعايير عالمية، للأطفال والمحترفين على حد سواء.</p>
+        <div class="foot-social">
+          <a href="#" aria-label="X">✕</a>
+          <a href="#" aria-label="Instagram">◎</a>
+          <a href="#" aria-label="LinkedIn">in</a>
+          <a href="#" aria-label="YouTube">▶</a>
+        </div>
+      </div>
+      <div class="foot-col">
+        <h5>المنصة</h5>
+        <a href="#categories">المسارات التعليمية</a>
+        <a href="#courses">الدورات</a>
+        <a href="#instructors">المدربون</a>
+        <a href="#certificates">الشهادات</a>
+      </div>
+      <div class="foot-col">
+        <h5>الدعم</h5>
+        <a href="#faq">الأسئلة الشائعة</a>
+        <a href="#">مركز المساعدة</a>
+        <a href="#">تواصل معنا</a>
+      </div>
+      <div class="foot-col">
+        <h5>الشركة</h5>
+        <a href="#">من نحن</a>
+        <a href="#">سياسة الخصوصية</a>
+        <a href="#">الشروط والأحكام</a>
+      </div>
+    </div>
+    <div class="foot-bottom">
+      <span>© 2026 منصة خوارزم. جميع الحقوق محفوظة.</span>
+      <span>صُنع بشغف من أجل التعليم العربي 🇦🇪</span>
+    </div>
+  </div>
+</footer>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/gsap.min.js"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/3.12.5/ScrollTrigger.min.js"></script>
+<script>
+/* ---------------- loader ---------------- */
+window.addEventListener('load', ()=>{
+  setTimeout(()=>{ document.getElementById('loader').classList.add('hide'); }, 900);
+});
+
+/* ---------------- header scroll ---------------- */
+const header = document.getElementById('siteHeader');
+window.addEventListener('scroll', ()=>{
+  header.classList.toggle('scrolled', window.scrollY > 40);
+});
+
+/* ---------------- mobile nav ---------------- */
+const burger = document.getElementById('burger');
+const navLinks = document.getElementById('navLinks');
+burger.addEventListener('click', ()=> navLinks.classList.toggle('open'));
+navLinks.querySelectorAll('a').forEach(a=>a.addEventListener('click', ()=>navLinks.classList.remove('open')));
+
+/* ---------------- categories data + render ---------------- */
+const categories = [
+  {icon:'🤖', title:'الذكاء الاصطناعي', level:'مبتدئ إلى احترافي', tags:['ML','Deep Learning','NLP']},
+  {icon:'🛠️', title:'أدوات الذكاء الاصطناعي', level:'كل المستويات', tags:['ChatGPT','Claude','Midjourney']},
+  {icon:'🏥', title:'الرعاية الصحية والذكاء الاصطناعي', level:'متوسط', tags:['تحليل الأشعة','تشخيص']},
+  {icon:'📊', title:'تحليل البيانات والذكاء الاصطناعي', level:'مبتدئ إلى متقدم', tags:['Python','Power BI','SQL']},
+  {icon:'📚', title:'التعليم بالذكاء الاصطناعي', level:'كل المستويات', tags:['تعلم شخصي','تقييم ذكي']},
+  {icon:'👨‍💼', title:'القيادة بالذكاء الاصطناعي', level:'محترفون', tags:['Business AI','قرار']},
+  {icon:'🎮', title:'صناعة الألعاب', level:'مبتدئ إلى احترافي', tags:['Unity','Unreal','Godot']},
+  {icon:'💻', title:'Front-End Development', level:'مبتدئ إلى متقدم', tags:['React','Next.js','Tailwind']},
+  {icon:'⚙️', title:'Back-End Development', level:'متوسط إلى متقدم', tags:['Node.js','Laravel','Django']},
+  {icon:'🧩', title:'سكراتش للأطفال', level:'6-12 سنة', tags:['منطق','ألعاب']},
+  {icon:'💡', title:'أساسيات البرمجة', level:'مبتدئ', tags:['خوارزميات','Flowcharts']},
+  {icon:'🎨', title:'التصميم ثلاثي الأبعاد', level:'متوسط إلى متقدم', tags:['Blender','Maya']},
+  {icon:'📱', title:'تطوير تطبيقات الموبايل', level:'متوسط إلى متقدم', tags:['Flutter','Firebase']},
+];
+const catGrid = document.getElementById('catGrid');
+categories.forEach((c,i)=>{
+  const el = document.createElement('div');
+  el.className = 'cat-card glass reveal';
+  el.innerHTML = `
+    <div class="cat-emoji">${c.icon}</div>
+    <div>
+      <h3>${c.title}</h3>
+      <div class="lvl">${c.level}</div>
+      <div class="cat-tags">${c.tags.map(t=>`<span>${t}</span>`).join('')}</div>
+    </div>`;
+  el.addEventListener('mousemove', e=>{
+    const r = el.getBoundingClientRect();
+    el.style.setProperty('--mx', (e.clientX-r.left)+'px');
+    el.style.setProperty('--my', (e.clientY-r.top)+'px');
+    const rx = ((e.clientY-r.top)/r.height - .5) * -8;
+    const ry = ((e.clientX-r.left)/r.width - .5) * 8;
+    el.style.transform = `rotateX(${rx}deg) rotateY(${ry}deg) translateY(-4px)`;
+  });
+  el.addEventListener('mouseleave', ()=>{ el.style.transform=''; });
+  catGrid.appendChild(el);
+});
+
+/* ---------------- courses carousel data ---------------- */
+const courses = [
+  {icon:'🤖', cat:'الذكاء الاصطناعي', title:'مقدمة في التعلم العميق', lvl:'متوسط', dur:'6 أسابيع'},
+  {icon:'💻', cat:'Front-End', title:'بناء واجهات بـ React و Tailwind', lvl:'مبتدئ', dur:'4 أسابيع'},
+  {icon:'🎮', cat:'صناعة الألعاب', title:'تصميم لعبتك الأولى في Unity', lvl:'مبتدئ', dur:'8 أسابيع'},
+  {icon:'📊', cat:'تحليل البيانات', title:'من Excel إلى Power BI', lvl:'متوسط', dur:'5 أسابيع'},
+  {icon:'🎨', cat:'3D Modeling', title:'أساسيات النحت الرقمي في Blender', lvl:'مبتدئ', dur:'6 أسابيع'},
+  {icon:'📱', cat:'تطبيقات الموبايل', title:'بناء تطبيقك الأول بـ Flutter', lvl:'متوسط', dur:'7 أسابيع'},
+];
+const courseCarousel = document.getElementById('courseCarousel');
+courses.forEach(c=>{
+  const el = document.createElement('div');
+  el.className = 'course-card glass';
+  el.innerHTML = `
+    <div class="course-cover" style="background:linear-gradient(135deg, rgba(0,198,255,.18), rgba(157,78,221,.18));">${c.icon}</div>
+    <div class="course-body">
+      <div class="course-cat">${c.cat}</div>
+      <h4>${c.title}</h4>
+      <div class="course-meta"><span>${c.lvl}</span><span>${c.dur}</span></div>
+    </div>`;
+  courseCarousel.appendChild(el);
+});
+document.getElementById('nextBtn').addEventListener('click', ()=> courseCarousel.scrollBy({left:320, behavior:'smooth'}));
+document.getElementById('prevBtn').addEventListener('click', ()=> courseCarousel.scrollBy({left:-320, behavior:'smooth'}));
+
+/* ---------------- tabs ---------------- */
+document.querySelectorAll('.tab-btn').forEach(btn=>{
+  btn.addEventListener('click', ()=>{
+    document.querySelectorAll('.tab-btn').forEach(b=>b.classList.remove('active'));
+    document.querySelectorAll('.path-panel').forEach(p=>p.classList.remove('active'));
+    btn.classList.add('active');
+    document.querySelector(`.path-panel[data-panel="${btn.dataset.tab}"]`).classList.add('active');
+  });
+});
+
+/* ---------------- faq accordion ---------------- */
+document.querySelectorAll('.faq-item').forEach(item=>{
+  const a = item.querySelector('.faq-a');
+  if(item.classList.contains('open')) a.style.maxHeight = a.scrollHeight+'px';
+  item.querySelector('.faq-q').addEventListener('click', ()=>{
+    const isOpen = item.classList.contains('open');
+    document.querySelectorAll('.faq-item').forEach(i=>{
+      i.classList.remove('open');
+      i.querySelector('.faq-a').style.maxHeight = null;
+    });
+    if(!isOpen){
+      item.classList.add('open');
+      a.style.maxHeight = a.scrollHeight+'px';
+    }
+  });
+});
+
+/* ---------------- counters ---------------- */
+function animateCounter(el){
+  const target = +el.dataset.target;
+  const dur = 1800;
+  const start = performance.now();
+  function step(now){
+    const p = Math.min((now-start)/dur, 1);
+    const eased = 1 - Math.pow(1-p, 3);
+    el.textContent = Math.floor(eased*target).toLocaleString('en-US');
+    if(p<1) requestAnimationFrame(step);
+    else el.textContent = target.toLocaleString('en-US');
+  }
+  requestAnimationFrame(step);
+}
+const counterObserver = new IntersectionObserver((entries)=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){ animateCounter(e.target); counterObserver.unobserve(e.target); }
+  });
+},{threshold:.5});
+document.querySelectorAll('.counter').forEach(c=>counterObserver.observe(c));
+
+/* ---------------- reveal on scroll ---------------- */
+const revealObserver = new IntersectionObserver((entries)=>{
+  entries.forEach((e,i)=>{
+    if(e.isIntersecting){
+      setTimeout(()=> e.target.classList.add('in'), (i%4)*90);
+      revealObserver.unobserve(e.target);
+    }
+  });
+},{threshold:.12});
+document.querySelectorAll('.reveal').forEach(el=>revealObserver.observe(el));
+
+/* ---------------- GSAP parallax on hero ---------------- */
+if(window.gsap){
+  gsap.registerPlugin(ScrollTrigger);
+  gsap.to('.hero-content', {
+    yPercent: 18, opacity: 0.3, ease:'none',
+    scrollTrigger:{ trigger:'.hero', start:'top top', end:'bottom top', scrub:true }
+  });
+}
+
+/* ---------------- three.js hero astrolabe scene ---------------- */
+(function(){
+  const canvas = document.getElementById('hero-canvas');
+  if(!window.THREE || !canvas) return;
+  const scene = new THREE.Scene();
+  const camera = new THREE.PerspectiveCamera(55, window.innerWidth/window.innerHeight, 0.1, 1000);
+  camera.position.set(0,0,14);
+  const renderer = new THREE.WebGLRenderer({canvas, alpha:true, antialias:true});
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio,2));
+  renderer.setSize(window.innerWidth, window.innerHeight);
+
+  const group = new THREE.Group();
+  scene.add(group);
+
+  const colors = [0x00c6ff, 0x7b61ff, 0x9d4edd, 0xd9b47c];
+  const rings = [];
+  for(let i=0;i<5;i++){
+    const radius = 3.2 + i*1.15;
+    const geo = new THREE.TorusGeometry(radius, 0.008, 8, 120);
+    const mat = new THREE.MeshBasicMaterial({color: colors[i % colors.length], transparent:true, opacity:0.35});
+    const ring = new THREE.Mesh(geo, mat);
+    ring.rotation.x = Math.PI/2 + (i*0.18);
+    ring.rotation.y = i*0.4;
+    ring.userData = { speed: 0.0009 + i*0.0004, axis: i%2===0 ? 'y':'x' };
+    group.add(ring);
+    rings.push(ring);
+  }
+
+  // glowing nodes on rings
+  const nodeGeo = new THREE.SphereGeometry(0.055, 12, 12);
+  const nodes = [];
+  rings.forEach((ring, idx)=>{
+    const count = 2 + (idx % 3);
+    for(let j=0;j<count;j++){
+      const mat = new THREE.MeshBasicMaterial({color: colors[(idx+j) % colors.length]});
+      const node = new THREE.Mesh(nodeGeo, mat);
+      node.userData = { ring, angle: (Math.PI*2/count)*j, radius: ring.geometry.parameters.radius };
+      group.add(node);
+      nodes.push(node);
+    }
+  });
+
+  // particle field
+  const particleCount = 400;
+  const positions = new Float32Array(particleCount*3);
+  for(let i=0;i<particleCount;i++){
+    positions[i*3] = (Math.random()-0.5)*30;
+    positions[i*3+1] = (Math.random()-0.5)*20;
+    positions[i*3+2] = (Math.random()-0.5)*20 - 5;
+  }
+  const pGeo = new THREE.BufferGeometry();
+  pGeo.setAttribute('position', new THREE.BufferAttribute(positions,3));
+  const pMat = new THREE.PointsMaterial({color:0x8fd6ff, size:0.035, transparent:true, opacity:0.55});
+  const particles = new THREE.Points(pGeo, pMat);
+  scene.add(particles);
+
+  let mouseX = 0, mouseY = 0;
+  window.addEventListener('mousemove', (e)=>{
+    mouseX = (e.clientX/window.innerWidth - 0.5);
+    mouseY = (e.clientY/window.innerHeight - 0.5);
+  });
+
+  function animate(t){
+    requestAnimationFrame(animate);
+    rings.forEach(r=>{
+      if(r.userData.axis==='y') r.rotation.z += r.userData.speed;
+      else r.rotation.z -= r.userData.speed;
+    });
+    nodes.forEach(n=>{
+      n.userData.angle += 0.004;
+      const a = n.userData.angle;
+      const r = n.userData.radius;
+      n.position.set(Math.cos(a)*r, Math.sin(a)*r*0.35, Math.sin(a*0.7)*r*0.25);
+    });
+    particles.rotation.y += 0.0006;
+    group.rotation.y += (mouseX*0.4 - group.rotation.y)*0.02;
+    group.rotation.x += (mouseY*0.25 - group.rotation.x)*0.02;
+    renderer.render(scene, camera);
+  }
+  requestAnimationFrame(animate);
+
+  window.addEventListener('resize', ()=>{
+    camera.aspect = window.innerWidth/window.innerHeight;
+    camera.updateProjectionMatrix();
+    renderer.setSize(window.innerWidth, window.innerHeight);
+  });
+})();
+</script>
+
+<!-- ... (باقي كود الموقع في الأعلى كما هو) ... -->
+
+<!-- نهاية الكود الأصلي، وهذا هو السكريبت المعدل بالكامل في أسفل الملف -->
+<script type="module">
+  // استيراد الدوال من Firebase
+  import { initializeApp } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-app.js";
+  import { getAuth, createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-auth.js";
+  import { getFirestore, doc, setDoc } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-firestore.js";
+  import { getAnalytics } from "https://www.gstatic.com/firebasejs/10.8.0/firebase-analytics.js";
+
+  // إعدادات Firebase الخاصة بك
+  const firebaseConfig = {
+    apiKey: "AIzaSyAO2bjJQX945OB6Gla3bz6beoR4MtDJgJk",
+    authDomain: "khawarizm-6ab6d.firebaseapp.com",
+    projectId: "khawarizm-6ab6d",
+    storageBucket: "khawarizm-6ab6d.firebasestorage.app",
+    messagingSenderId: "497388250576",
+    appId: "1:497388250576:web:b959c9d98dec0fb3dac5d5",
+    measurementId: "G-S10YL85TQ8"
+  };
+
+  // تهيئة Firebase
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const analytics = getAnalytics(app);
+
+  // التعامل مع فورم التسجيل
+  const registerForm = document.getElementById('registerForm');
+  const authMessage = document.getElementById('authMessage');
+
+  registerForm.addEventListener('submit', async (e) => {
+    e.preventDefault();
+    
+    const name = document.getElementById('regName').value;
+    const age = document.getElementById('regAge').value;
+    const course = document.getElementById('regCourse').value;
+    const email = document.getElementById('regEmail').value;
+    const password = document.getElementById('regPassword').value;
+
+    authMessage.textContent = "جاري إنشاء الحساب...";
+    authMessage.className = "auth-message";
+
+    try {
+      // 1. إنشاء حساب المستخدم
+      const userCredential = await createUserWithEmailAndPassword(auth, email, password);
+      const user = userCredential.user;
+
+      // 2. حفظ البيانات في Firestore
+      await setDoc(doc(db, "users", user.uid), {
+        fullName: name,
+        age: parseInt(age),
+        selectedCourse: course,
+        email: email,
+        createdAt: new Date().toISOString()
+      });
+
+      authMessage.textContent = "تم إنشاء الحساب بنجاح!";
+      authMessage.className = "auth-message success";
+      registerForm.reset();
+      
+      setTimeout(() => {
+        document.getElementById('authModal').classList.add('hide');
+        authMessage.textContent = "";
+      }, 2000);
+
+    } catch (error) {
+      console.error("Error:", error);
+      authMessage.className = "auth-message error";
+      authMessage.textContent = "حدث خطأ: " + error.message;
+    }
+  });
+</script>
+</body>
+
+</html>
